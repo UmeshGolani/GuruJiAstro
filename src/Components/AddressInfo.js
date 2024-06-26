@@ -3,6 +3,7 @@ import React from 'react';
 import { TextField, Box } from '@mui/material';
 
 const AddressInfo = ({ formData, handleChange, errors }) => {
+  
   return (
     <Box component="form" sx={{ mt: 3 }}>
       <TextField
@@ -25,6 +26,16 @@ const AddressInfo = ({ formData, handleChange, errors }) => {
       />
       <TextField
         fullWidth
+        label="Zip Code"
+        variant="outlined"
+        value={formData.zip}
+        onChange={handleChange('zip')}
+        margin="normal"
+        error={!!errors.zip}
+        helperText={errors.zip}
+      />
+      <TextField
+        fullWidth
         label="City"
         variant="outlined"
         value={formData.city}
@@ -43,16 +54,7 @@ const AddressInfo = ({ formData, handleChange, errors }) => {
         error={!!errors.state}
         helperText={errors.state}
       />
-      <TextField
-        fullWidth
-        label="Zip Code"
-        variant="outlined"
-        value={formData.zip}
-        onChange={handleChange('zip')}
-        margin="normal"
-        error={!!errors.zip}
-        helperText={errors.zip}
-      />
+      
     </Box>
   );
 };

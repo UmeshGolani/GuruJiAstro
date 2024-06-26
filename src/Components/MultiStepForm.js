@@ -1,10 +1,10 @@
-// src/components/MultiStepForm.js
 import React, { useState, useEffect } from 'react';
 import PersonalInfo from './PersonalInfo';
 import AddressInfo from './AddressInfo';
 import Confirmation from './Confirmation';
 import Navigation from './Navigation';
 import { Container, Box, Typography } from '@mui/material';
+import axios from 'axios';
 
 const steps = ['Personal Information', 'Address Information', 'Confirmation'];
 
@@ -54,9 +54,31 @@ const MultiStepForm = () => {
     localStorage.removeItem('formData');
   };
 
-  const handleChange = (input) => (e) => {
-    setFormData({ ...formData, [input]: e.target.value });
-    localStorage.setItem('formData', JSON.stringify({ ...formData, [input]: e.target.value }));
+  const handleChange = (input) => async (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, [input]: value });
+    localStorage.setItem('formData', JSON.stringify({ ...formData, [input]: value }));
+
+    if (input === 'zip' && value.length === 6) {
+      try {
+        const response = await axios.get(`https://thezipcodes.com/api/v1/search?zipCode=${value}&countryCode=IN&apiKey=d031f36a88ae6c19a11f925f3ef13f34`);
+        if (response.data && response.data.location && response.data.location.length > 0) {
+          const { city, state } = response.data.location[0];
+          setFormData((prevData) => ({
+            ...prevData,
+            city,
+            state
+          }));
+          localStorage.setItem('formData', JSON.stringify({
+            ...formData,
+            city,
+            state
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching location data:', error);
+      }
+    }
   };
 
   const validateForm = () => {
